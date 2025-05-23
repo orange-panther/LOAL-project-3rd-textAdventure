@@ -10,7 +10,7 @@ introduction :-
 /* This rule just writes out game instructions. */
 
 /* TODO: rewrite to actual commands*/
-instructions :-
+instructions :- 
         nl,
         write('Enter commands using standard Prolog syntax.'), nl,
         write('Available commands are:'), nl,
@@ -25,8 +25,11 @@ instructions :-
         nl.
 
 /* start */
-start :- introduction, 
-            instructions.
+start :- 
+        retractall(i_am_at(_)),
+        assert(i_am_at(boat_deck)),
+        introduction, 
+        instructions.
         
 /* define first location */
 
@@ -41,9 +44,9 @@ path(boat_deck, d, pantry).
 path(beach, w, boat_deck).
 
 path(captains_cabin, e, boat_deck).
-path(captain_cabin, n, captain_cabin_cupboard).
+path(captains_cabin, n, captains_cabin_cupboard).
 
-path(captain_cabin_cupboard, s, captain_cabin).
+path(captains_cabin_cupboard, s, captain_cabin).
 
 path(pantry, u, boat_deck).
 
@@ -52,7 +55,7 @@ path(pantry, u, boat_deck).
 
 at(wood, pantry).
 at(barrels, pantry).
-at(flint, captain_cabin_cupboard).
+at(flint, captains_cabin_cupboard).
 
 /* These facts tell what you can craft out of objects */
 
@@ -73,7 +76,8 @@ look :-
         describe(Place),
         nl,
         notice_objects_at(Place),
-        nl.
+        nl,
+        list_inventory.
 
 /* These rules describe how to pick up an object. */
 
@@ -114,9 +118,11 @@ d :- go(d).
 go(Direction) :-
         i_am_at(Here),
         path(Here, Direction, There),
+        !,
         retract(i_am_at(Here)),
         assert(i_am_at(There)),
-        look, !.
+        look,
+        nl.
 
 go(_) :-
         write('You can''t go that way.').
@@ -162,6 +168,15 @@ craft(New) :-
 craft(_) :- 
         write('You cannot craft such an object or don\'t have the ressources for it'), nl.
 
+
+/* This rule lists all of your elements */
+list_inventory :-
+        findall(Item, holding(Item), Items),
+        ( Items = [] ->
+            write('You are not holding anything.'), nl
+        ; 
+            write('You are holding: '), write(Items), nl
+        ).
         
 /* These rules describe the various rooms. */
 
@@ -169,7 +184,7 @@ describe(boat_deck) :- write('You are currently on the deck of the last remainin
 describe(captains_cabin) :- write('You now have entered the cabin of the captain... you.'), nl.
 describe(pantry) :- write('You are currently in the pantry where food and drinks are stored.'), nl.
 describe(beach) :- write('You are standing on the beach after you left the boat. You hear seaguls screeching and the waves crushing in. On the north you see the beginning of a gigantic wood. You can hear the monkey  Uwentus is right behind you.'), nl.
-describe(captain_cabin_cupboard) :- write('You are stading in front of a cupboard in your cabin.'), nl.
+describe(captains_cabin_cupboard) :- write('You are stading in front of a cupboard in your cabin.'), nl.
 
 
 /* rules for describing which objects are around player */
