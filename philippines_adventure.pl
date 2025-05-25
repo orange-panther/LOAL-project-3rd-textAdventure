@@ -50,7 +50,7 @@ at(captains_cabin_cupboard, captains_cabin).
 inside(flint, captains_cupboard).
 
 /* rule to define what can be opened */
-can_be_opened(captains_cabin_cupboard)
+can_be_opened(cupboard)
 
 /* rule to open something */
 open(Object) :-
