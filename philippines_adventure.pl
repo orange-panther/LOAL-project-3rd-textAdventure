@@ -1,6 +1,6 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
-:- dynamic i_am_at/1, at/2, holding/1, recipe/2.
+:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2.
 
 introduction :- 
         write('The sea lies calm. Tropical heat shimmers over the wooden deck of your ship as the sun goes down. Gulls circle above the coast—white sand, dense jungle, smoke rising from the huts on the horizon. After months at sea… finally land.'), nl,
@@ -28,12 +28,59 @@ instructions :-
 start :- 
         retractall(i_am_at(_)),
         assert(i_am_at(boat_deck)),
+        retractall(holding(_)),
         introduction, 
-        instructions.
+        instructions,
+        nl,
+        look.
         
 /* define first location */
 
 i_am_at(boat_deck).
+
+/* These facts tell where the various objects in the game
+   are located. */
+
+at(wood, pantry).
+at(barrels, pantry).
+at(captains_cabin_cupboard, captains_cabin).
+
+/* describe what objects are inside something */
+
+inside(flint, captains_cupboard).
+
+/* rule to define what can be opened */
+can_be_opened(captains_cabin_cupboard)
+
+/* rule to open something */
+open(Object) :-
+        i_am_at(Location),
+        at(Object, Location),
+        can_be_opened(Object),
+        findall(Item, inside(Item, Object), Items),
+        ( Items = [] ->
+            write('It is empty.'), nl
+        ;
+            write('You open the '), write(Object), write(' and find: '), write(Items), nl,
+            forall(
+                member(Item, Items),
+                (
+                    retract(inside(Item, Object)),
+                    assert(at(Item, Location))
+                )
+            )
+        ),
+        !.
+
+open(Object) :-
+        i_am_at(Location),
+        at(Object, Location),
+        \+ can_be_opened(Object),
+        write(Object), write(' cannot be opened.'), nl,
+        !.
+
+open(_) :-
+        write('There is nothing like that to open here.'), nl.
 
 /* describe how the locations are connected */
 
@@ -50,12 +97,7 @@ path(captains_cabin_cupboard, s, captain_cabin).
 
 path(pantry, u, boat_deck).
 
-/* These facts tell where the various objects in the game
-   are located. */
 
-at(wood, pantry).
-at(barrels, pantry).
-at(flint, captains_cabin_cupboard).
 
 /* These facts tell what you can craft out of objects */
 
@@ -193,3 +235,4 @@ notice_objects_at(boat_deck) :- write('You find nothing around you except the wi
 notice_objects_at(captains_cabin) :- write('It\'s dark and stuffy in here. Around you there are some cupboards and drawers.'),nl.
 notice_objects_at(pantry) :- write('You find some dusty barrels lying around. Behind them you can see some wood.'), nl.
 notice_objects_at(beach) :- write('The beach is relatively empty. Some stones and shells lying around... nothing special'), nl.
+notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You have to open it before you can access anything inside.'), nl.
