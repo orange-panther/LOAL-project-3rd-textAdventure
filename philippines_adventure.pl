@@ -1,11 +1,12 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
 :- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2.
+:- discontiguous open/1.
 
 introduction :- 
         write('The sea lies calm. Tropical heat shimmers over the wooden deck of your ship as the sun goes down. Gulls circle above the coast—white sand, dense jungle, smoke rising from the huts on the horizon. After months at sea… finally land.'), nl,
         write('The Philippines. A place not yet marked on your map. A distant edge of the world—and perhaps the end of your journey.'), nl,
-        write('You are Ferdinand Magellan, captain of the last remaining ships of your fleet. On behalf of the Spanish crown, you have crossed the West—through storm, hunger, and mutiny. And now, you are here. Standing beside your loyal companion Uwentus.'), nl .
+        write('You are Ferdinand Magellan, captain of the last remaining ships of your fleet. On behalf of the Spanish crown, you have crossed the West—through storm, hunger, and mutiny. And now, you are here. Standing beside your loyal companion Uwentus.'), nl.
 
 /* This rule just writes out game instructions. */
 
@@ -21,8 +22,7 @@ instructions :-
         write('look.                -- to look around you again.'), nl,
         write('open(Drawer).        -- to open a drawer or a cupboard'), nl,
         write('instructions.        -- to see this message again.'), nl,
-        write('halt.                -- to end the game and quit.'), nl,
-        nl.
+        write('halt.                -- to end the game and quit.'), nl.
 
 /* start */
 start :- 
@@ -43,14 +43,14 @@ i_am_at(boat_deck).
 
 at(wood, pantry).
 at(barrels, pantry).
-at(captains_cabin_cupboard, captains_cabin).
+at(cupboard, captains_cabin_cupboard).
 
 /* describe what objects are inside something */
 
-inside(flint, captains_cupboard).
+inside(flint, cupboard).
 
 /* rule to define what can be opened */
-can_be_opened(cupboard)
+can_be_opened(cupboard).
 
 /* rule to open something */
 open(Object) :-
@@ -80,7 +80,8 @@ open(Object) :-
         !.
 
 open(_) :-
-        write('There is nothing like that to open here.'), nl.
+        write('There is nothing like that to open here.'), nl,
+        !.
 
 /* describe how the locations are connected */
 
@@ -119,7 +120,8 @@ look :-
         nl,
         notice_objects_at(Place),
         nl,
-        list_inventory.
+        list_inventory,
+        !.
 
 /* These rules describe how to pick up an object. */
 
@@ -176,24 +178,14 @@ drop(X) :-
         i_am_at(Place),
         retract(holding(X)),
         assert(at(X, Place)),
-        write('OK.'),
-        !, nl.
+        write('OK.'), nl,
+        !.
 
 drop(_) :-
         write('You aren''t holding it!'),
-        nl.
+        nl,
+        !.
 
-
-/* These rules descrube how to open a cupboard or drawer */
-
-open(Drawer) :-
-        i_am_at(Drawer),
-        notice_objects_at(Drawer), 
-        !, nl.
-
-open(_):-
-        write('You can not open anything at this place'), 
-        nl.
 
 
 /* These rules craft an object */
