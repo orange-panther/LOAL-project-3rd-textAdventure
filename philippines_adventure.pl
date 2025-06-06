@@ -44,6 +44,7 @@ i_am_at(boat_deck).
 at(wood, pantry).
 at(barrels, pantry).
 at(cupboard, captains_cabin_cupboard).
+at(flint, cupboard).
 
 /* describe what objects are inside something */
 
@@ -57,18 +58,16 @@ open(Object) :-
         i_am_at(Location),
         at(Object, Location),
         can_be_opened(Object),
+
+        % Finde alle Items, die sich aktuell im Objekt befinden
         findall(Item, inside(Item, Object), Items),
+
+        % Inhalt anzeigen oder sagen, dass es leer ist
         ( Items = [] ->
-            write('It is empty.'), nl
+                write('It is empty.'), nl
         ;
-            write('You open the '), write(Object), write(' and find: '), write(Items), nl,
-            forall(
-                member(Item, Items),
-                (
-                    retract(inside(Item, Object)),
-                    assert(at(Item, Location))
-                )
-            )
+                write('You open the '), write(Object),
+                write(' and find: '), write(Items), nl
         ),
         !.
 
