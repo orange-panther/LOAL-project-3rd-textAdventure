@@ -1,7 +1,7 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
-:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_drawer/1.
-:- discontiguous open/1.
+:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1.
+:- discontiguous open_object/1.
 
 introduction :- 
         write('The sea lies calm. Tropical heat shimmers over the wooden deck of your ship as the sun goes down. Gulls circle above the coast—white sand, dense jungle, smoke rising from the huts on the horizon. After months at sea… finally land.'), nl,
@@ -15,14 +15,18 @@ instructions :-
         nl,
         write('Enter commands using standard Prolog syntax.'), nl,
         write('Available commands are:'), nl,
-        write('start.               -- to start the game.'), nl,
-        write('n.  s.  e.  w. u. d. -- to go in that direction (north, south, east, west, up, down).'), nl,
-        write('take(Object).        -- to pick up an object.'), nl,
-        write('drop(Object).        -- to put down an object.'), nl,
-        write('look.                -- to look around you again.'), nl,
-        write('open(Drawer).        -- to open a drawer or a cupboard'), nl,
-        write('instructions.        -- to see this message again.'), nl,
-        write('halt.                -- to end the game and quit.'), nl.
+        write('start.                  -- to start the game.'), nl,
+        write('n.  s.  e.  w.  u.  d.  -- to go in that direction (north, south, east, west, up, down).'), nl,
+        write('take(Object).           -- to pick up an object.'), nl,
+        write('take_out(Object).       -- to take an object out of a drawer.'), nl,
+        write('drop(Object).           -- to put down an object.'), nl,
+        write('look.                   -- to look around you again.'), nl,
+        write('open_object(Drawer).    -- to open a drawer or cupboard.'), nl,
+        write('close_object(Drawer).   -- to close a drawer or cupboard; IMPORTANT: please remember to always close a drawer, or you will not be able to open it again.'), nl,
+        write('recipes.                -- to show all recipes you are able to craft.'), nl,
+        write('craft(Object).          -- to craft an object that you looked up in the recipe book; you have to hold the needed items.'), nl,
+        write('instructions.           -- to see this message again.'), nl,
+        write('halt.                   -- to end the game and quit.'), nl.
 
 /* start */
 start :- 
@@ -55,7 +59,7 @@ can_be_opened(cupboard).
 cupboard_open(false).
 
 /* rule to open something */
-open(Object) :-
+open_object(Object) :-
         i_am_at(Location),
         at(Object, Location),
         can_be_opened(Object),
@@ -75,20 +79,20 @@ open(Object) :-
         ),
         !.
 
-open(Object) :-
+open_object(Object) :-
         i_am_at(Location),
         at(Object, Location),
         (\+ can_be_opened(Object); cupboard_open(true)),
         write(Object), write(' cannot be opened.'), nl,
         !.
 
-open(_) :-
+open_object(_) :-
         write('There is nothing like that to open here.'), nl,
         !.
 
 
 /* rule to close something */
-close_drawer(Object) :-
+close_object(Object) :-
         i_am_at(Location),
         at(Object, Location),
         can_be_opened(Object),
@@ -97,14 +101,14 @@ close_drawer(Object) :-
         assert(cupboard_open(false)),
         !.
 
-close_drawer(Object) :-
+close_object(Object) :-
         i_am_at(Location),
         at(Object, Location),
         \+ can_be_opened(Object),
         write(Object), write(' cannot be closed.'), nl,
         !.
 
-close_drawer(_) :-
+close_object(_) :-
         write('There is nothing like that to close here.'), nl,
         !.
 
