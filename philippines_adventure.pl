@@ -119,6 +119,8 @@ path(boat_deck, w, captains_cabin).
 path(boat_deck, d, pantry).
 
 path(beach, w, boat_deck).
+path(beach, e, jungle).
+path(beach, s, river).
 
 path(captains_cabin, e, boat_deck).
 path(captains_cabin, n, captains_cabin_cupboard).
@@ -126,6 +128,13 @@ path(captains_cabin, n, captains_cabin_cupboard).
 path(captains_cabin_cupboard, s, captains_cabin).
 
 path(pantry, u, boat_deck).
+
+path(river, n, beach).
+
+path(jungle, w, beach).
+path(jungle, e, friend_village).
+
+path(friend_village, s, enemy_village).
 
 
 
@@ -141,7 +150,7 @@ recipes.  % succeeds after all options fail
 
 recipe(torch, flint, wood).
 
-/* This rule tells how to look about you. */
+/* This rule tells how to look around you. */
 
 look :-
         i_am_at(Place),
@@ -190,6 +199,21 @@ take_out(_) :-
         write('I don''t see it here.'),
         nl.
 
+        /* These rules describe how to put down an object. */
+
+drop(X) :-
+        holding(X),
+        i_am_at(Place),
+        retract(holding(X)),
+        assert(at(X, Place)),
+        write('OK.'), nl,
+        !.
+
+drop(_) :-
+        write('You aren''t holding it!'),
+        nl,
+        !.
+
 /* These rules define the six direction letters as calls to go/1. */
 
 n :- go(n).
@@ -217,21 +241,6 @@ go(Direction) :-
 
 go(_) :-
         write('You can''t go that way.').
-
-/* These rules describe how to put down an object. */
-
-drop(X) :-
-        holding(X),
-        i_am_at(Place),
-        retract(holding(X)),
-        assert(at(X, Place)),
-        write('OK.'), nl,
-        !.
-
-drop(_) :-
-        write('You aren''t holding it!'),
-        nl,
-        !.
 
 
 
@@ -275,3 +284,14 @@ notice_objects_at(captains_cabin) :- write('It\'s dark and stuffy in here. Aroun
 notice_objects_at(pantry) :- write('You find some dusty barrels lying around. Behind them you can see some wood.'), nl.
 notice_objects_at(beach) :- write('The beach is relatively empty. Some stones and shells lying around... nothing special'), nl.
 notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You have to open it before you can access anything inside.'), nl.
+
+die :- 
+        write('You died. Maybe try again and choose a different ending.'), nl,
+        halt.
+
+sail_away :-
+        i_am_at(boat_deck),
+        write('Congratulations! You did the only right thing to do in this situation. You sailed away and left the people of the foreign island live their life in peace.'),nl,
+        halt.
+sail_away :-
+        write('You have to be on the boat deck to sail away.'), nl.        
