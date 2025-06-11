@@ -1,6 +1,6 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
-:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2.
+:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_drawer/1.
 :- discontiguous open/1.
 
 introduction :- 
@@ -52,12 +52,16 @@ inside(flint, cupboard).
 
 /* rule to define what can be opened */
 can_be_opened(cupboard).
+cupboard_open(false).
 
 /* rule to open something */
 open(Object) :-
         i_am_at(Location),
         at(Object, Location),
         can_be_opened(Object),
+        cupboard_open(false),
+        retract(cupboard_open(false)),
+        assert(cupboard_open(true)),
 
         % Finde alle Items, die sich aktuell im Objekt befinden
         findall(Item, inside(Item, Object), Items),
@@ -74,12 +78,34 @@ open(Object) :-
 open(Object) :-
         i_am_at(Location),
         at(Object, Location),
-        \+ can_be_opened(Object),
+        (\+ can_be_opened(Object); cupboard_open(true)),
         write(Object), write(' cannot be opened.'), nl,
         !.
 
 open(_) :-
         write('There is nothing like that to open here.'), nl,
+        !.
+
+
+/* rule to close something */
+close_drawer(Object) :-
+        i_am_at(Location),
+        at(Object, Location),
+        can_be_opened(Object),
+        cupboard_open(true),
+        retract(cupboard_open(true)),
+        assert(cupboard_open(false)),
+        !.
+
+close_drawer(Object) :-
+        i_am_at(Location),
+        at(Object, Location),
+        \+ can_be_opened(Object),
+        write(Object), write(' cannot be closed.'), nl,
+        !.
+
+close_drawer(_) :-
+        write('There is nothing like that to close here.'), nl,
         !.
 
 /* describe how the locations are connected */
@@ -93,7 +119,7 @@ path(beach, w, boat_deck).
 path(captains_cabin, e, boat_deck).
 path(captains_cabin, n, captains_cabin_cupboard).
 
-path(captains_cabin_cupboard, s, captain_cabin).
+path(captains_cabin_cupboard, s, captains_cabin).
 
 path(pantry, u, boat_deck).
 
@@ -141,6 +167,24 @@ take(_) :-
         write('I don''t see it here.'),
         nl.
 
+/* These rules describe how to take an object out of a drawer */
+
+take_out(X) :-
+         holding(X),
+        write('You''re already holding it!'),
+        !, nl.
+
+take_out(X) :-
+        i_am_at(captains_cabin_cupboard),
+        at(X, Place),
+        retract(at(X, Place)),
+        assert(holding(X)),
+        write('OK.'),
+        !, nl.
+
+take_out(_) :-
+        write('I don''t see it here.'),
+        nl.
 
 /* These rules define the six direction letters as calls to go/1. */
 
@@ -195,7 +239,7 @@ craft(New) :-
         retract(holding(X)),
         retract(holding(Y)),
         assert(holding(New)),
-        write('Holding new object'), write(New),
+        write('Holding new object '), write(New),
         !, nl.
 
 craft(_) :- 
@@ -217,7 +261,7 @@ describe(boat_deck) :- write('You are currently on the deck of the last remainin
 describe(captains_cabin) :- write('You now have entered the cabin of the captain... you.'), nl.
 describe(pantry) :- write('You are currently in the pantry where food and drinks are stored.'), nl.
 describe(beach) :- write('You are standing on the beach after you left the boat. You hear seaguls screeching and the waves crushing in. On the north you see the beginning of a gigantic wood. You can hear the monkey  Uwentus is right behind you.'), nl.
-describe(captains_cabin_cupboard) :- write('You are stading in front of a cupboard in your cabin.'), nl.
+describe(captains_cabin_cupboard) :- write('You are standing in front of a cupboard in your cabin.'), nl.
 
 
 /* rules for describing which objects are around player */
