@@ -298,7 +298,7 @@ describe(captains_cabin_cupboard) :- write('You are standing in front of a cupbo
 describe(jungle) :- write('You are standing at the entrance of a jungle. It\'s looking grim and dangerous.'), nl.
 describe(river) :- write('You reach a river, its surface black and still. You can just make out a line of stones crossing to the other side.'), nl.
 describe(friend_village) :- write('You come out of the jungle and see a little village. You and your crew enter it.'), nl.
-describe(rajah_hut) :- write(''), nl.
+describe(rajah_hut) :- write('The largest house rises in its center, tall and still. Two guards watch you approach but let you pass without a word. You turn to your crew. “Stay here,” you command. They obey. Inside, the air is dense and warm. At the far end, seated like a statue carved from wood and pride, is Rajah Humabon. He watches your every step. You stand tall, despite the weight of the journey. “I am Ferdinand Magellan,” you say, your voice steady. “I come not to conquer, but to befriend the distant lands of this world.” A long silence. Then, his answer—measured, sharp: “If you truly seek friendship,” he says, “you must first prove your loyalty." [yes.] [no.]'), nl.
 
 /* rules for des:cribing which objects are around player */
 
