@@ -26,7 +26,7 @@ instructions :-
         write('recipes.                -- to show all recipes you are able to craft.'), nl,
         write('craft(Object).          -- to craft an object that you looked up in the recipe book; you have to hold the needed items.'), nl,
         write('instructions.           -- to see this message again.'), nl,
-        write('halt.                   -- to end the game and quit.'), nl.
+        write('sail_away.              -- to end the game and leave the island.'), nl.
 
 /* start */
 start :- 
@@ -134,8 +134,11 @@ path(river, n, beach).
 path(jungle, w, beach).
 path(jungle, e, friend_village).
 
-path(friend_village, s, enemy_village).
+path(friend_village, w, jungle).
+path(friend_village, e, tidal_strait). /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
+path(friend_village, s, rajah_hut).
 
+path(tidal_strait, w, friend_village).
 
 
 /* These facts tell what you can craft out of objects */
@@ -240,7 +243,7 @@ go(Direction) :-
         nl.
 
 go(_) :-
-        write('You can''t go that way.').
+        write('You can\'t go that way.').
 
 
 
@@ -267,6 +270,20 @@ list_inventory :-
         ; 
             write('You are holding: '), write(Items), nl
         ).
+
+/* These rules are for choices */
+yes :- i_am_at(jungle),
+        holding(torch),
+        write('You have entered the jungle. You hear some noises in the bushes while you walk through it, but the light from you torch is keeping the animals away.'), nl,
+        go(e), 
+        !.
+
+yes :- i_am_at(jungle),
+        \+holding(torch),
+        die. 
+
+yes :- i_am_at(river), 
+        die.
         
 /* These rules describe the various rooms. */
 
@@ -275,41 +292,54 @@ describe(captains_cabin) :- write('You now have entered the cabin of the captain
 describe(pantry) :- write('You are currently in the pantry where food and drinks are stored.'), nl.
 describe(beach) :- write('You are standing on the beach after you left the boat. You hear seaguls screeching and the waves crushing in. On the north you see the beginning of a gigantic wood. You can hear the monkey  Uwentus is right behind you.'), nl.
 describe(captains_cabin_cupboard) :- write('You are standing in front of a cupboard in your cabin.'), nl.
+describe(jungle) :- write('You are standing at the entrance of a jungle. It\'s looking grim and dangerous.'), nl.
+describe(river) :- write('You reach a river, its surface black and still. You can just make out a line of stones crossing to the other side.'), nl.
+describe(friend_village) :- write('You come out of the jungle and see a little village. You and your crew enter it.'), nl.
+describe(rajah_hut) :- write(''), nl.
 
-
-/* rules for describing which objects are around player */
+/* rules for des:cribing which objects are around player */
 
 notice_objects_at(boat_deck) :- write('You find nothing around you except the wide sea and your faithful friend Uwentus'),nl.
 notice_objects_at(captains_cabin) :- write('It\'s dark and stuffy in here. Around you there are some cupboards and drawers.'),nl.
 notice_objects_at(pantry) :- write('You find some dusty barrels lying around. Behind them you can see some wood.'), nl.
 notice_objects_at(beach) :- write('The beach is relatively empty. Some stones and shells lying around... nothing special'), nl.
 notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You have to open it before you can access anything inside.'), nl.
+notice_objects_at(jungle) :- write('You can make out some trees and bushes in the darkness, but it is all overgrown and you wouldn\'t even dare to leave the path.
+You have the choice to enter the jungle [yes.] or go back to the beach [w.]'), nl.
+notice_objects_at(river) :- write('You see no other living being around you, you only hear the sound of the water running downstream.
+You have the choice to cross the river [yes.] or go back to the beach [n.]'), nl.
+notice_objects_at(friend_village) :- write('You see some people by their huts. They look at you curiously, as if they were trying to determine whether you are a friend or a foe. Maybe you could try to approach one of them.'), nl.
 
-die :- i_am_at(jungle)
-        write('It was dark. The jungle echoed with the sounds of the night—chirping insects, distant howls, rustling leaves. 
-                You can barely see, each step is cautious and slow. 
-                Suddenly, a low growl cut through the silence. Out of the shadows, two glowing eyes appeare. Before you can run, the tiger lunged. There was no escape. 
-                The last thing you hear was the roar. Then—darkness.'), nl,
-                halt.
+/* rules for describing the death of the player */
 
-die :- i_am_at(river)
-        write('Your reache a river, its surface black and still. You can just make out a line of stones crossing to the other side. Carefully, you step onto the first one—cold, slick, but steady. One step, then another.
-                Then the "stone" moved.
-                A pair of eyes opened beneath you. Teeth flashed. Too late, you realize—they aren’t stones. They are alligators.
-                The river came alive.
-                And then... nothing. '), nl
-                halt.
+die :- i_am_at(jungle),
+        write('The jungle echoed with the sounds of the night—chirping insects, distant howls, rustling leaves. 
+You can barely see, each step is cautious and slow. 
+Suddenly, a low growl cut through the silence. Out of the shadows, two glowing eyes appeare. Before you can run, the tiger lunged. There was no escape. 
+The last thing you hear was the roar. Then—darkness. 
+Maybe it would be a good idea to enter the jungle with some light source next time.'), nl, nl,
+halt.
 
-#TODO instert ending
+die :- i_am_at(river),
+        write('Carefully, you step onto the first one—cold, slick, but steady. One step, then another.
+Then the "stone" moved.
+A pair of eyes opened beneath you. Teeth flashed. Too late, you realize—they aren’t stones. They are alligators.
+The river came alive.
+And you became the opposite...'), nl, nl,
+halt.
 
-die :- 
+/* TODO: insert ending */
+
+die :- i_am_at(tidal_strait),
         write('I drew my blade.
-                We charged.
-                Their spears flew faster than I could raise my arm. One struck my leg. I stumbled in the surf. Another hit my side. The water turned red.
-                I looked up—Lapu-Lapu’s men closed in.
-                The last thing I saw was the rising sun.
-                And then... nothing. '), nl
-                halt.
+We charged.
+Their spears flew faster than I could raise my arm. One struck my leg. I stumbled in the surf. Another hit my side. The water turned red.
+I looked up—Lapu-Lapu’s men closed in.
+The last thing I saw was the rising sun.
+And then... nothing. '), nl, nl,
+halt.
+
+/* rules for the win of the player */
 
 sail_away :-
         i_am_at(boat_deck),
