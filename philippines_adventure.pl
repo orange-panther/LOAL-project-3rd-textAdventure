@@ -49,6 +49,7 @@ at(wood, pantry).
 at(barrels, pantry).
 at(cupboard, captains_cabin_cupboard).
 at(flint, cupboard).
+at(stone, river).
 
 /* describe what objects are inside something */
 
@@ -152,6 +153,8 @@ recipes :-
 recipes.  % succeeds after all options fail
 
 recipe(torch, flint, wood).
+recipe(axt, stone, wood).
+recipe(hoe, steel, wood).
 
 /* This rule tells how to look around you. */
 
@@ -306,7 +309,7 @@ notice_objects_at(beach) :- write('The beach is relatively empty. Some stones an
 notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You have to open it before you can access anything inside.'), nl.
 notice_objects_at(jungle) :- write('You can make out some trees and bushes in the darkness, but it is all overgrown and you wouldn\'t even dare to leave the path.
 You have the choice to enter the jungle [yes.] or go back to the beach [w.]'), nl.
-notice_objects_at(river) :- write('You see no other living being around you, you only hear the sound of the water running downstream.
+notice_objects_at(river) :- write('You see no other living being around you, you only hear the sound of the water running downstream. But there are some stones laying around
 You have the choice to cross the river [yes.] or go back to the beach [n.]'), nl.
 notice_objects_at(friend_village) :- write('You see some people by their huts. They look at you curiously, as if they were trying to determine whether you are a friend or a foe. Maybe you could try to approach one of them.'), nl.
 
