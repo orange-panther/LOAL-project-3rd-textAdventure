@@ -279,7 +279,7 @@ describe(captains_cabin_cupboard) :- write('You are standing in front of a cupbo
 
 /* rules for describing which objects are around player */
 
-notice_objects_at(boat_deck) :- write('You find nothing around you except the wide sea and your faithful friend Uwe'),nl.
+notice_objects_at(boat_deck) :- write('You find nothing around you except the wide sea and your faithful friend Uwentus'),nl.
 notice_objects_at(captains_cabin) :- write('It\'s dark and stuffy in here. Around you there are some cupboards and drawers.'),nl.
 notice_objects_at(pantry) :- write('You find some dusty barrels lying around. Behind them you can see some wood.'), nl.
 notice_objects_at(beach) :- write('The beach is relatively empty. Some stones and shells lying around... nothing special'), nl.
