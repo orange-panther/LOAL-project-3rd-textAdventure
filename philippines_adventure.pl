@@ -154,7 +154,7 @@ recipes.  % succeeds after all options fail
 
 recipe(torch, flint, wood).
 recipe(axt, stone, wood).
-recipe(hoe, steel, wood).
+recipe(hoe, stone, wood).
 
 /* This rule tells how to look around you. */
 
