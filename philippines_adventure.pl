@@ -285,20 +285,20 @@ notice_objects_at(pantry) :- write('You find some dusty barrels lying around. Be
 notice_objects_at(beach) :- write('The beach is relatively empty. Some stones and shells lying around... nothing special'), nl.
 notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You have to open it before you can access anything inside.'), nl.
 
-die :- 
-        write('You died. Maybe try again and choose a different ending.'), nl,
-        halt.
-
 die :- i_am_at(jungle)
-        write('It was dark. The jungle echoed with the sounds of the night—chirping insects, distant howls, rustling leaves. You can barely see, each step is cautious and slow. Suddenly, a low growl cut through the silence. Out of the shadows, two glowing eyes appeare. Before you can run, the tiger lunged. There was no escape. The last thing you hear was the roar. Then—darkness.')
+        write('It was dark. The jungle echoed with the sounds of the night—chirping insects, distant howls, rustling leaves. 
+                You can barely see, each step is cautious and slow. 
+                Suddenly, a low growl cut through the silence. Out of the shadows, two glowing eyes appeare. Before you can run, the tiger lunged. There was no escape. 
+                The last thing you hear was the roar. Then—darkness.'), nl,
+                halt.
 
 die :- i_am_at(river)
         write('Your reache a river, its surface black and still. You can just make out a line of stones crossing to the other side. Carefully, you step onto the first one—cold, slick, but steady. One step, then another.
                 Then the "stone" moved.
                 A pair of eyes opened beneath you. Teeth flashed. Too late, you realize—they aren’t stones. They are alligators.
                 The river came alive.
-                And then... nothing.
-')
+                And then... nothing. '), nl
+                halt.
 
 #TODO instert ending
 
@@ -308,8 +308,8 @@ die :-
                 Their spears flew faster than I could raise my arm. One struck my leg. I stumbled in the surf. Another hit my side. The water turned red.
                 I looked up—Lapu-Lapu’s men closed in.
                 The last thing I saw was the rising sun.
-                And then... nothing.
-')
+                And then... nothing. '), nl
+                halt.
 
 sail_away :-
         i_am_at(boat_deck),
