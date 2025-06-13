@@ -1,6 +1,6 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
-:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1.
+:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1, accepted/1.
 :- discontiguous open_object/1.
 
 introduction :- 
@@ -133,14 +133,55 @@ path(pantry, u, boat_deck).
 path(river, n, beach).
 
 path(jungle, w, beach).
-path(jungle, e, friend_village).
+path(jungle, e, village).
 
-path(friend_village, w, jungle).
-path(friend_village, e, tidal_strait). /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
-path(friend_village, s, rajah_hut).
+path(village, w, jungle).
 
-path(tidal_strait, w, friend_village).
+path(village, e, tidal_strait). /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
 
+path(village, s, rajah_hut).
+path(rajah_hut, n, village).
+
+path(tidal_strait, w, village).
+
+path(village, n, village_district).
+path(village_district, s, village).
+
+path(village_district, w, philipom_house).
+path(philipom_house, e, village_district).
+
+path(village_district, e, marki_house).
+path(marki_house, w, village_district).
+
+/* These facts tell you if villagers exist */
+villager(philipom).
+villager(marki).
+villager(antoninon).
+villager(luena).
+villager(llorena).
+villager(pagipogi).
+
+/* These facts tell you how to talk to someone*/
+talk(Villager) :-
+    villagerl(Villager),
+    i_am_at(philipom_house),
+    holding(hoe),
+    !.
+
+talk(Villager) :-
+    villager(Villager),
+    i_am_at(philipom_house),
+    \+holding(hoe),
+    write("philipom: Hello... I am Philipom. I need some wood for my fireplace... but my axe broke before I could get any. Rajah will be mad at me if I won't."), nl,
+    write("Would you help him [yes.]"),
+    !.
+
+talk(Villager) :-
+    villager(Villager),
+    i_am_at(marki_house),
+    write("marki: Hello stranger, I am Marki. "),
+    write("I need your help, my family is starving.... We have a field but no hoe. I need to save my wife and kids, could you craft me a hoe please? You'll need stone and wood "),
+    !.
 
 /* These facts tell what you can craft out of objects */
 
@@ -165,6 +206,7 @@ look :-
         notice_objects_at(Place),
         nl,
         list_inventory,
+        list_tasks,
         !.
 
 /* These rules describe how to pick up an object. */
@@ -205,7 +247,7 @@ take_out(_) :-
         write('I don''t see it here.'),
         nl.
 
-        /* These rules describe how to put down an object. */
+/* These rules describe how to put down an object. */
 
 drop(X) :-
         holding(X),
@@ -274,6 +316,16 @@ list_inventory :-
             write('You are holding: '), write(Items), nl
         ).
 
+
+/* This rule lists all of your tasks */
+list_tasks :- 
+        findall(Task, accepted(Task), Tasks),
+        ( Tasks = [] -> 
+            write('You have no active tasks'), nl
+        ;
+            write('You are tasked: '), write(Tasks), nl
+        ).
+
 /* These rules are for choices */
 yes :- i_am_at(jungle),
         holding(torch),
@@ -287,9 +339,14 @@ yes :- i_am_at(jungle),
 
 yes :- i_am_at(river), 
         die.
-        
-/* These rules describe the various rooms. */
 
+yes :- i_am_at(philipom_house),
+        write('What? ... You want to help me? Thank you traveler.'), nl,
+        \+accepted(philipom_task),
+        assert(accepted(philipom_task)),
+        !.
+
+/* These rules describe the various rooms. */
 describe(boat_deck) :- write('You are currently on the deck of the last remaining boat of your fleet. You have a broad deck, two stairs and the entry to the captains cabin.'), nl.
 describe(captains_cabin) :- write('You now have entered the cabin of the captain... you.'), nl.
 describe(pantry) :- write('You are currently in the pantry where food and drinks are stored.'), nl.
@@ -297,8 +354,9 @@ describe(beach) :- write('You are standing on the beach after you left the boat.
 describe(captains_cabin_cupboard) :- write('You are standing in front of a cupboard in your cabin.'), nl.
 describe(jungle) :- write('You are standing at the entrance of a jungle. It\'s looking grim and dangerous.'), nl.
 describe(river) :- write('You reach a river, its surface black and still. You can just make out a line of stones crossing to the other side.'), nl.
-describe(friend_village) :- write('You come out of the jungle and see a little village. You and your crew enter it.'), nl.
+describe(village) :- write('You come out of the jungle and see a little village. You and your crew enter it.'), nl.
 describe(rajah_hut) :- write('The largest house rises in its center, tall and still. Two guards watch you approach but let you pass without a word. You turn to your crew. “Stay here,” you command. They obey. Inside, the air is dense and warm. At the far end, seated like a statue carved from wood and pride, is Rajah Humabon. He watches your every step. You stand tall, despite the weight of the journey. “I am Ferdinand Magellan,” you say, your voice steady. “I come not to conquer, but to befriend the distant lands of this world.” A long silence. Then, his answer—measured, sharp: “If you truly seek friendship,” he says, “you must first prove your loyalty." [yes.] [no.]'), nl.
+describe(village_district) :- write(''), nl.
 
 /* rules for des:cribing which objects are around player */
 
@@ -307,11 +365,10 @@ notice_objects_at(captains_cabin) :- write('It\'s dark and stuffy in here. Aroun
 notice_objects_at(pantry) :- write('You find some dusty barrels lying around. Behind them you can see some wood.'), nl.
 notice_objects_at(beach) :- write('The beach is relatively empty. Some stones and shells lying around... nothing special'), nl.
 notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You have to open it before you can access anything inside.'), nl.
-notice_objects_at(jungle) :- write('You can make out some trees and bushes in the darkness, but it is all overgrown and you wouldn\'t even dare to leave the path.
-You have the choice to enter the jungle [yes.] or go back to the beach [w.]'), nl.
-notice_objects_at(river) :- write('You see no other living being around you, you only hear the sound of the water running downstream. But there are some stones laying around
-You have the choice to cross the river [yes.] or go back to the beach [n.]'), nl.
-notice_objects_at(friend_village) :- write('You see some people by their huts. They look at you curiously, as if they were trying to determine whether you are a friend or a foe. Maybe you could try to approach one of them.'), nl.
+notice_objects_at(jungle) :- write('You can make out some trees and bushes in the darkness, but it is all overgrown and you wouldn\'t even dare to leave the path. You have the choice to enter the jungle [yes.] or go back to the beach [w.]'), nl.
+notice_objects_at(river) :- write('You see no other living being around you, you only hear the sound of the water running downstream. But there are some stones laying around. You have the choice to cross the river [yes.] or go back to the beach [n.]'), nl.
+notice_objects_at(village) :- write('You see some people by their huts. They look at you curiously, as if they were trying to determine whether you are a friend or a foe. Maybe you could try to approach one of them.'), nl.
+notice_objects_at(village_district) :- write(''), nl.
 
 /* rules for describing the death of the player */
 
@@ -331,7 +388,7 @@ The river came alive.
 And you became the opposite...'), nl, nl,
 halt.
 
-die :- i_am_at(rajah_hut)
+die :- i_am_at(rajah_hut),
         write('Rajah is not happy that you said "No", he tooks out an axe and slams it in your scull. Your crew also gets killed by the guards'), nl, nl,
 halt.
 
