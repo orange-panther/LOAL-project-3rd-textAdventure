@@ -332,7 +332,8 @@ And you became the opposite...'), nl, nl,
 halt.
 
 die :- i_am_at(rajah_hut)
-        write('Rajah is not happy that you said "No", he tooks out an axe and slams it in your scull. Your crew also gets killed by the guards')
+        write('Rajah is not happy that you said "No", he tooks out an axe and slams it in your scull. Your crew also gets killed by the guards'), nl, nl,
+halt.
 
 /* TODO: insert ending */
 
