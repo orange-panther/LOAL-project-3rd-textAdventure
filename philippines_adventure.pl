@@ -173,14 +173,15 @@ talk(Villager) :-
     i_am_at(philipom_house),
     \+holding(hoe),
     write("philipom: Hello... I am Philipom. I need some wood for my fireplace... but my axe broke before I could get any. Rajah will be mad at me if I won't."), nl,
-    write("Would you help him [yes.]"),
+    write("Would you help him? [yes.]"),
     !.
 
 talk(Villager) :-
     villager(Villager),
     i_am_at(marki_house),
     write("marki: Hello stranger, I am Marki. "),
-    write("I need your help, my family is starving.... We have a field but no hoe. I need to save my wife and kids, could you craft me a hoe please? You'll need stone and wood "),
+    write("I need your help, my family is starving.... We have a field but no hoe. I need to save my wife and kids :("), nl,
+    write("Would you help him? [yes.]")
     !.
 
 /* These facts tell what you can craft out of objects */
@@ -340,10 +341,18 @@ yes :- i_am_at(jungle),
 yes :- i_am_at(river), 
         die.
 
+no :- i_am_at(rajah_hut),
+        die.
+
 yes :- i_am_at(philipom_house),
         write('What? ... You want to help me? Thank you traveler.'), nl,
         \+accepted(philipom_task),
         assert(accepted(philipom_task)),
+        !.
+yes :- i_am_at(marki_house),
+        write('You are gonna help me?.. You are saving us, thank you'), nl,
+        \+accepted(marki_task),
+        assert(accepted(marki_task)),
         !.
 
 /* These rules describe the various rooms. */
