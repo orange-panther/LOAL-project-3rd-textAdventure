@@ -406,6 +406,11 @@ yes :-
         write('You are now holding a hoe.'), nl,
         !.
 
+/* rules to plow the field */
+plow :-
+        i_am_at(markis_field),
+        assert(holding(getreide)).
+
 /* These rules describe the various rooms. */
 describe(boat_deck) :- write('You are currently on the deck of the last remaining boat of your fleet. You have a broad deck, two stairs and the entry to the captains cabin.'), nl.
 describe(captains_cabin) :- write('You now have entered the cabin of the captain... you.'), nl.
@@ -421,6 +426,7 @@ describe(philipom_house) :- write('In the distant you see a sad man. You and Uwe
 describe(marki_house) :- write('You see a small house, some ill looking children are laying in front of it. Then a skinny man comes out. [his name is Marki] '), nl.
 describe(village_district_end) :- write(''), nl.
 describe(antoninon_house) :- write('You see a big house with lots of tools and weapons in front of it, in the door frame an intimidating man. [his name is Antoninon]'), nl.
+describe(markis_field) :- write('field'), nl.
 
 
 /* rules for des:cribing which objects are around player */
@@ -447,16 +453,13 @@ notice_objects_at(village_district_end) :-
         write(''), nl.
 notice_objects_at(philipom_house) :- 
     write('Philipom stands silently outside his hut, his eyes heavy with worry. Beside him, a cracked water jug rests on the ground, and the scent of bitter herbs floats in the air.'), nl.
-
 notice_objects_at(marki_house) :- 
     write('Marki, thin and pale, kneels beside the sick children, whispering quietly to one of them. Small cloth bundles and simple toys lie scattered nearby, mixing with the faint smell of smoke and old medicine.'), nl.
-
 notice_objects_at(village_district_end) :- 
     write('No one is here. The last huts fade into the jungle, and only the rustle of leaves and distant birds break the stillness. Some faint footprints lead into the trees.'), nl.
-
 notice_objects_at(antoninon_house) :- 
     write('Antoninon stands in the doorway, arms crossed, watching you with a stern gaze. Around him lie sharpened tools, stacked wooden crates, and a heavy chest sealed with iron.'), nl.
-
+notice_objects_at(markis_field) :- write('field'), nl.
 
 /* rules for describing the death of the player */
 
