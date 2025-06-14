@@ -193,9 +193,10 @@ talk(Villager) :-
     !.
 
 talk(Villager) :-
-        villager(Villager),
-        i_am_at(antoninon_house),
-        write("You: Hello, my name is Ferdinand. I am here to help some villagers and I am currently searchin for a hoe")
+   villager(Villager),
+   i_am_at(antoninon_house),
+   write("You: Hello, my name is Ferdinand. I am here to help some villagers and I am currently searchin for a hoe"), nl,
+   !.
 
 
 /* These facts tell what you can craft out of objects */
