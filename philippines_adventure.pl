@@ -1,7 +1,7 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
 :- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1, accepted/1.
-:- discontiguous open_object/1.
+:- discontiguous open_object/1, yes/0.
 
 introduction :- 
         write('The sea lies calm. Tropical heat shimmers over the wooden deck of your ship as the sun goes down. Gulls circle above the coast—white sand, dense jungle, smoke rising from the huts on the horizon. After months at sea… finally land.'), nl,
@@ -33,6 +33,7 @@ start :-
         retractall(i_am_at(_)),
         assert(i_am_at(boat_deck)),
         retractall(holding(_)),
+        retractall(accepted(_)),
         introduction, 
         instructions,
         nl,
@@ -163,7 +164,7 @@ villager(pagipogi).
 
 /* These facts tell you how to talk to someone*/
 talk(Villager) :-
-    villagerl(Villager),
+    villager(Villager),
     i_am_at(philipom_house),
     holding(hoe),
     !.
@@ -181,7 +182,7 @@ talk(Villager) :-
     i_am_at(marki_house),
     write("marki: Hello stranger, I am Marki. "),
     write("I need your help, my family is starving.... We have a field but no hoe. I need to save my wife and kids :("), nl,
-    write("Would you help him? [yes.]")
+    write("Would you help him? [yes.]"),
     !.
 
 /* These facts tell what you can craft out of objects */
@@ -365,7 +366,8 @@ describe(jungle) :- write('You are standing at the entrance of a jungle. It\'s l
 describe(river) :- write('You reach a river, its surface black and still. You can just make out a line of stones crossing to the other side.'), nl.
 describe(village) :- write('You come out of the jungle and see a little village. You and your crew enter it.'), nl.
 describe(rajah_hut) :- write('The largest house rises in its center, tall and still. Two guards watch you approach but let you pass without a word. You turn to your crew. “Stay here,” you command. They obey. Inside, the air is dense and warm. At the far end, seated like a statue carved from wood and pride, is Rajah Humabon. He watches your every step. You stand tall, despite the weight of the journey. “I am Ferdinand Magellan,” you say, your voice steady. “I come not to conquer, but to befriend the distant lands of this world.” A long silence. Then, his answer—measured, sharp: “If you truly seek friendship,” he says, “you must first prove your loyalty." [yes.] [no.]'), nl.
-describe(village_district) :- write(''), nl.
+describe(village_district) :- write('You walk deeper into the village. There are some huts around'), nl.
+describe(philipom_house) :- write('You walk up to the house. One man stands outside of it [his name is philipom]'), nl.
 
 /* rules for des:cribing which objects are around player */
 
@@ -377,7 +379,8 @@ notice_objects_at(captains_cabin_cupboard) :- write('The cupboard is closed. You
 notice_objects_at(jungle) :- write('You can make out some trees and bushes in the darkness, but it is all overgrown and you wouldn\'t even dare to leave the path. You have the choice to enter the jungle [yes.] or go back to the beach [w.]'), nl.
 notice_objects_at(river) :- write('You see no other living being around you, you only hear the sound of the water running downstream. But there are some stones laying around. You have the choice to cross the river [yes.] or go back to the beach [n.]'), nl.
 notice_objects_at(village) :- write('You see some people by their huts. They look at you curiously, as if they were trying to determine whether you are a friend or a foe. Maybe you could try to approach one of them.'), nl.
-notice_objects_at(village_district) :- write(''), nl.
+notice_objects_at(village_district) :- write('You notice some huts on the left and right of you.'), nl.
+notice_objects_at(philipom_house) :- write(''), nl.
 
 /* rules for describing the death of the player */
 
