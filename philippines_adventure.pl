@@ -39,9 +39,6 @@ start :-
         nl,
         look.
         
-/* define first location */
-
-i_am_at(boat_deck).
 
 /* These facts tell where the various objects in the game
    are located. */
@@ -167,6 +164,7 @@ talk(Villager) :-
     villager(Villager),
     i_am_at(philipom_house),
     holding(hoe),
+    accepted(philipom_task),
     write('You give Philipom the hoe.'), nl,
     retract(holding(hoe)),
     ( accepted(philipom_task) ->
@@ -181,9 +179,17 @@ talk(Villager) :-
 talk(Villager) :-
     villager(Villager),
     i_am_at(philipom_house),
-    \+holding(hoe),
+    \+ accepted(philipom_task),
     write("philipom: Hello... I am Philipom. I need some wood for my fireplace... but my axe broke before I could get any. Rajah will be mad at me if I won't."), nl,
     write("Would you help him? [yes.]"),
+    !.
+
+talk(Villager) :-
+    villager(Villager),
+    i_am_at(philipom_house),
+    accepted(philipom_task),
+    \+holding(hoe),
+    write('Have you got my hoe yet? ... Please hurry'), nl,
     !.
 
 talk(Villager) :-
