@@ -1,6 +1,6 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
-:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1, accepted/1.
+:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1, accepted/1, completed/1.
 :- discontiguous open_object/1, yes/0.
 
 introduction :- 
@@ -167,6 +167,15 @@ talk(Villager) :-
     villager(Villager),
     i_am_at(philipom_house),
     holding(hoe),
+    write('You give Philipom the hoe.'), nl,
+    retract(holding(hoe)),
+    ( accepted(philipom_task) ->
+        retract(accepted(philipom_task)),
+        assert(completed(philipom_task)),
+        write('Task completed: philipom_task'), nl
+    ; 
+        true
+    ),
     !.
 
 talk(Villager) :-
