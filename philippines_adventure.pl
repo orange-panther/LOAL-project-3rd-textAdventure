@@ -163,18 +163,10 @@ villager(pagipogi).
 talk(Villager) :-
     villager(Villager),
     i_am_at(philipom_house),
-    holding(hoe),
+    holding(axe),
     accepted(philipom_task),
-    write('You give Philipom the hoe.'), nl,
-    retract(holding(hoe)),
-    ( accepted(philipom_task) ->
-        retract(accepted(philipom_task)),
-        assert(completed(philipom_task)),
-        write('Task completed: philipom_task'), nl
-    ; 
-        true
-    ),
-    !.
+    write('Philipom looks at your hand. Is this axe for me? [yes. | go(_).]'), nl,
+    
 
 talk(Villager) :-
     villager(Villager),
@@ -188,8 +180,8 @@ talk(Villager) :-
     villager(Villager),
     i_am_at(philipom_house),
     accepted(philipom_task),
-    \+holding(hoe),
-    write('Have you got my hoe yet? ... Please hurry'), nl,
+    \+holding(axe),
+    write('Have you got my axe yet? ... Please hurry'), nl,
     !.
 
 talk(Villager) :-
@@ -199,6 +191,12 @@ talk(Villager) :-
     write("I need your help, my family is starving.... We have a field but no hoe. I need to save my wife and kids :("), nl,
     write("Would you help him? [yes.]"),
     !.
+
+talk(Villager) :-
+        villager(Villager),
+        i_am_at(antoninon_house),
+        write("You: Hello, my name is Ferdinand. I am here to help some villagers and I am currently searchin for a hoe")
+
 
 /* These facts tell what you can craft out of objects */
 
@@ -211,8 +209,7 @@ recipes :-
 recipes.  % succeeds after all options fail
 
 recipe(torch, flint, wood).
-recipe(axt, stone, wood).
-recipe(hoe, stone, wood).
+recipe(axe, stone, wood).
 
 /* This rule tells how to look around you. */
 
@@ -369,6 +366,19 @@ yes :- i_am_at(marki_house),
         write('You are gonna help me?.. You are saving us, thank you'), nl,
         \+accepted(marki_task),
         assert(accepted(marki_task)),
+        !.
+yes :- 
+        i_am_at(philipom_house),
+        accepted(philipom_task),
+        holding(axe),
+        retract(holding(axe)),
+        ( accepted(philipom_task) ->
+                retract(accepted(philipom_task)),
+                assert(completed(philipom_task)),
+                write('Task completed: philipom_task'), nl
+        ; 
+                true
+        ),
         !.
 
 /* These rules describe the various rooms. */
