@@ -31,7 +31,7 @@ instructions :-
 /* start */
 start :- 
         retractall(i_am_at(_)),
-        assert(i_am_at(village_district)),
+        assert(i_am_at(boat_deck)),
         retractall(holding(_)),
         retractall(accepted(_)),
         introduction, 
