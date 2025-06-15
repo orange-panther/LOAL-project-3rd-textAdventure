@@ -1,6 +1,6 @@
 /* phillippines adventure by Flora Dallinger, Lena Grassauer and Katharina Einzenberger */
 
-:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1, accepted/1, completed/1.
+:- dynamic i_am_at/1, at/2, holding/1, recipe/2, inside/2, cupboard_open/1, close_object/1, accepted/1, completed/1, path/3.
 :- discontiguous open_object/1, yes/0.
 
 introduction :- 
@@ -8,7 +8,7 @@ introduction :-
         write('The Philippines. A place not yet marked on your map. A distant edge of the world—and perhaps the end of your journey.'), nl,
         write('You are Ferdinand Magellan, captain of the last remaining ships of your fleet. On behalf of the Spanish crown, you have crossed the West—through storm, hunger, and mutiny. And now, you are here. Standing beside your loyal companion Uwentus.'), nl.
 
-/* This rule just writes out game instructions. */
+/* This rule just writes out game instructions. */ 
 
 /* TODO: rewrite to actual commands*/
 instructions :- 
@@ -35,6 +35,7 @@ start :-
         assert(i_am_at(boat_deck)),
         retractall(holding(_)),
         retractall(accepted(_)),
+        retractall(completed(_)),
         introduction, 
         instructions,
         nl,
@@ -245,8 +246,15 @@ talk(Villager) :-
     accepted(rajah_main_task),
     completed(marki_task),
     completed(philipom_task),
-    write(''), /*TODO: text for the beef with the other village*/
-    assert(path(village, e, tidal_strait)). /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
+    ( accepted(rajah_main_task) ->
+        retract(accepted(rajah_main_task)),
+        assert(completed(rajah_main_task)), 
+        write('Task completed: rajah_main_task'), nl
+    ; 
+        true
+    ),
+    write('hallo'), /*TODO: text for the beef with the other village*/
+    assert(path(village, e, tidal_strait)), /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
     !.
 
 talk(Villager) :-
@@ -420,11 +428,16 @@ yes :- i_am_at(jungle),
 yes :- i_am_at(river), 
         die.
 
+yes :-
+        i_am_at(tidal_strait),
+        die.
+
 no :- i_am_at(rajah_hut),
         die.
 
+
 yes :- i_am_at(rajah_hut),
-        assert(rajah_main_task),
+        assert(accepted(rajah_main_task)),
         list_tasks,
         !.
 
@@ -467,7 +480,6 @@ yes :- i_am_at(marki_house),
         assert(accepted(marki_task)),
         !.
 
-
 yes :- 
         i_am_at(antoninon_house),
         accepted(marki_task),
@@ -501,7 +513,7 @@ describe(marki_house) :- write('You see a small house, some ill looking children
 describe(village_district_end) :- write(''), nl.
 describe(antoninon_house) :- write('You see a big house with lots of tools and weapons in front of it, in the door frame an intimidating man. [his name is Antoninon]'), nl.
 describe(markis_field) :- write('You see a small uneven field, carrot and potato tops spoke out of the dirt and wheat plants swaying gently in the breeze.'), nl.
-
+describe(tidal_strait) :- write('Are you sure you want to enter and continue the story?'), nl.
 
 /* rules for des:cribing which objects are around player */
 
@@ -534,6 +546,8 @@ notice_objects_at(village_district_end) :-
 notice_objects_at(antoninon_house) :- 
     write('Antoninon stands in the doorway, arms crossed, watching you with a stern gaze. Around him lie sharpened tools, stacked wooden crates, and a heavy chest sealed with iron.'), nl.
 notice_objects_at(markis_field) :- write('field'), nl.
+notice_objects_at(rajah_hut) :- write('rajah hut'), nl.
+notice_objects_at(tidal_strait) :- write(''), nl.
 
 /* rules for describing the death of the player */
 
