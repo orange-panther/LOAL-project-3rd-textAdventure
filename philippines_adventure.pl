@@ -417,7 +417,10 @@ yes :-
 /* rules to plow the field */
 plow :-
         i_am_at(markis_field),
-        assert(holding(getreide)).
+        holding(hoe),
+        assert(holding(grain)),
+        write('You plow the field. After you are finished you pick up the grain'),
+        list_inventory.
 
 /* These rules describe the various rooms. */
 describe(boat_deck) :- write('You are currently on the deck of the last remaining boat of your fleet. You have a broad deck, two stairs and the entry to the captains cabin.'), nl.
