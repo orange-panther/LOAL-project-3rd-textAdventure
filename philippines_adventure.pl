@@ -581,7 +581,13 @@ halt.
 /* TODO: insert ending */
 
 die :- i_am_at(tidal_strait),
-        write('You drew your blade.
+        write('
+        At dawn, you set out with Rajah Humabon and his warriors. The boats glide silently over the calm sea. Your crew prepares their muskets, tense and quiet. Ahead lies Mactan—Lapu-Lapu’s land.
+        You reach the shore. The enemy is already waiting.
+        You give the signal. Muskets fire. Smoke. Screams. A few of them fall—but most charge without fear.
+        Their spears come fast. Your powder is damp. Reloading is too slow.
+        They reach your line.
+        You swing your sword, but it’s not enough. The tide pulls at your legs. Your men are falling. Rajah’s warriors break and scatter.
         Their spears fly faster than you can raise your arm. One struck your leg. You stumble in the surf. Another hit your side. The water is turning red.
         You look up Lapu-Lapu’s men close in.
         The last thing you see is the rising sun.
