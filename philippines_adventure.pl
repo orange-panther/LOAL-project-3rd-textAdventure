@@ -210,6 +210,14 @@ talk(Villager) :-
 
 talk(Villager) :-
     villager(Villager),
+    i_am_at(marki_house),
+    holding(food),
+    accepted(marki_task),
+    write('Is this food for us?... [yes. | go(_).]'), nl,
+    !.
+
+talk(Villager) :-
+    villager(Villager),
     i_am_at(antoninon_house),
     accepted(marki_task),
     write("You: Hello, my name is Ferdinand. I am here to help some villagers and I am currently searchin for a hoe. Do you have one I might borrow?"), nl,
@@ -426,7 +434,7 @@ describe(philipom_house) :- write('In the distant you see a sad man. You and Uwe
 describe(marki_house) :- write('You see a small house, some ill looking children are laying in front of it. Then a skinny man comes out. [his name is Marki] '), nl.
 describe(village_district_end) :- write(''), nl.
 describe(antoninon_house) :- write('You see a big house with lots of tools and weapons in front of it, in the door frame an intimidating man. [his name is Antoninon]'), nl.
-describe(markis_field) :- write('field'), nl.
+describe(markis_field) :- write('You see a small uneven field, carrot and potato tops spoke out of the dirt and wheat plants swaying gently in the breeze.'), nl.
 
 
 /* rules for des:cribing which objects are around player */
