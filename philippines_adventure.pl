@@ -117,33 +117,28 @@ close_object(_) :-
 /* describe how the locations are connected */
 
 path(boat_deck, e, beach).
-path(boat_deck, w, captains_cabin).
-path(boat_deck, d, pantry).
-
 path(beach, w, boat_deck).
-path(beach, e, jungle).
-path(beach, s, river).
 
+path(boat_deck, w, captains_cabin).
 path(captains_cabin, e, boat_deck).
-path(captains_cabin, n, captains_cabin_cupboard).
 
+path(captains_cabin, n, captains_cabin_cupboard).
 path(captains_cabin_cupboard, s, captains_cabin).
 
+path(boat_deck, d, pantry).
 path(pantry, u, boat_deck).
 
+path(beach, s, river).
 path(river, n, beach).
 
+path(beach, e, jungle).
 path(jungle, w, beach).
+
 path(jungle, e, village).
-
 path(village, w, jungle).
-
-path(village, e, tidal_strait). /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
 
 path(village, s, rajah_hut).
 path(rajah_hut, n, village).
-
-path(tidal_strait, w, village).
 
 path(village, n, village_district).
 path(village_district, s, village).
@@ -163,26 +158,34 @@ path(village_district_end, s, village_district).
 path(village_district_end, e, antoninon_house).
 path(antoninon_house, w, village_district_end).
 
-/* These facts tell you if villagers exist */
+/* These facts tell you if villagers exist and where they are located*/
 villager(philipom).
 villager(marki).
 villager(antoninon).
 villager(luena).
 villager(llorena).
 villager(pagipogi).
+villager(rajah).
+
+villager_located(philipom, philipom_house).
+villager_located(marki, marki_house).
+villager_located(antoninon, antoninon_house).
+villager_located(rajah, rajah_hut).
 
 /* These facts tell you how to talk to someone*/
 talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, philipom_house),
     i_am_at(philipom_house),
     holding(axe),
     accepted(philipom_task),
-    write('Philipom looks at your hand. Is this axe for me? [yes. | go(_).]'), nl,
+    write('Philipom looks at your hand. philipom: Is this axe for me? [yes. | go(_).]'), nl,
     !.
     
 
 talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, philipom_house),
     i_am_at(philipom_house),
     \+accepted(philipom_task),
     write("philipom: Hello... I am Philipom. I need some wood for my fireplace... but my axe broke before I could get any. Rajah will be mad at me if I won't."), nl,
@@ -192,6 +195,7 @@ talk(Villager) :-
 
 talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, philipom_house),
     i_am_at(philipom_house),
     accepted(philipom_task),
     \+holding(axe),
@@ -201,6 +205,7 @@ talk(Villager) :-
 
 talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, marki_house),
     i_am_at(marki_house),
     accepted(marki_task),
     \+holding(grain),
@@ -209,6 +214,7 @@ talk(Villager) :-
 
 talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, marki_house),
     i_am_at(marki_house),
     holding(grain),
     accepted(marki_task),
@@ -217,6 +223,7 @@ talk(Villager) :-
 
     talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, marki_house),
     i_am_at(marki_house),
     write("marki: Hello stranger, I am Marki. "),
     write("I need your help, my family is starving ... We have a field but no hoe. I need to save my wife and kids :("), nl,
@@ -225,10 +232,38 @@ talk(Villager) :-
 
 talk(Villager) :-
     villager(Villager),
+    villager_located(Villager, antoninon_house),
     i_am_at(antoninon_house),
     accepted(marki_task),
     write("You: Hello, my name is Ferdinand. I am here to help some villagers and I am currently searchin for a hoe. Do you have one I might borrow?"), nl,
     write("Antoninon: A hoe you say? Of course, but I don't give them to strangers! Well maybe the old one, here so called Ferdinand [yes.] to accept hoe"),
+    !.
+
+
+talk(Villager) :- 
+    villager(Villager),
+    villager_located(Villager, rajah_hut),
+    i_am_at(rajah_hut),
+    accepted(rajah_main_task),
+    completed(marki_task),
+    completed(philipom_task),
+    write(''), /*TODO: text for the beef with the other village*/
+    assert(path(village, e, tidal_strait)). /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
+    !.
+
+talk(Villager) :-
+    villager(Villager),
+    villager_located(Villager, rajah_hut),
+    i_am_at(rajah_hut),
+    accepted(rajah_main_task),
+    write('You haven\'t gained enough status yet.'), nl,
+    !.
+
+talk(Villager) :-
+    villager(Villager),
+    villager_located(Villager, rajah_hut),
+    i_am_at(rajah_hut),
+    write(' “I am Ferdinand Magellan,” you say, your voice steady. “I come not to conquer, but to befriend the distant lands of this world.” A long silence. Then, his answer—measured, sharp: “If you truly seek friendship,” he says, “you must first prove your loyalty." [yes.] [no.]'), nl,
     !.
 
 /* These facts tell what you can craft out of objects */
@@ -390,6 +425,11 @@ yes :- i_am_at(river),
 no :- i_am_at(rajah_hut),
         die.
 
+yes :- i_am_at(rajah_hut),
+        assert(rajah_main_task),
+        list_tasks,
+        !.
+
 yes :-
         i_am_at(marki_house),
         accepted(marki_task),
@@ -456,7 +496,7 @@ describe(captains_cabin_cupboard) :- write('You are standing in front of a cupbo
 describe(jungle) :- write('You are standing at the entrance of a jungle. It\'s looking grim and dangerous.'), nl.
 describe(river) :- write('You reach a river, its surface black and still. You can just make out a line of stones crossing to the other side.'), nl.
 describe(village) :- write('You come out of the jungle and see a little village. You and your crew enter it.'), nl.
-describe(rajah_hut) :- write('The largest house rises in its center, tall and still. Two guards watch you approach but let you pass without a word. You turn to your crew. “Stay here,” you command. They obey. Inside, the air is dense and warm. At the far end, seated like a statue carved from wood and pride, is Rajah Humabon. He watches your every step. You stand tall, despite the weight of the journey. “I am Ferdinand Magellan,” you say, your voice steady. “I come not to conquer, but to befriend the distant lands of this world.” A long silence. Then, his answer—measured, sharp: “If you truly seek friendship,” he says, “you must first prove your loyalty." [yes.] [no.]'), nl.
+describe(rajah_hut) :- write('The largest house rises in its center, tall and still. Two guards watch you approach but let you pass without a word. You turn to your crew. “Stay here,” you command. They obey. Inside, the air is dense and warm. At the far end, seated like a statue carved from wood and pride, is Rajah Humabon. He watches your every step. You stand tall, despite the weight of the journey.'), nl.
 describe(village_district) :- write('As you walk deeper in the village, you notice small huts around you.'), nl.
 describe(philipom_house) :- write('In the distant you see a sad man. You and Uwe walk up to the house. The man stands outside of it [his name is philipom]'), nl.
 describe(marki_house) :- write('You see a small house, some ill looking children are laying in front of it. Then a skinny man comes out. [his name is Marki] '), nl.
