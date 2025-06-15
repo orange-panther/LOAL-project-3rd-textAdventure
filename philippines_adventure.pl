@@ -255,7 +255,7 @@ talk(Villager) :-
     ),
     write('Rajah: Ferdinand, you are back and you have gained my trust. Now i need to tell you something...
                 Long ago, me and Lapu Lapu were allies, but then he turned against us. For years he has been threatening us that he will destroy the fields or houses.
-                Now I have decided, it''s enoug. In a short time there will be war...
+                Now I have decided, it''s enough. In a short time there will be war...
                 Ferdinand, I need to ask you if you fight on our side? [yes.] [go.]'),
     assert(path(village, e, tidal_strait)), /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
     !.
@@ -513,7 +513,7 @@ describe(rajah_hut) :- write('The largest house rises in its center, tall and st
 describe(village_district) :- write('As you walk deeper in the village, you notice small huts around you.'), nl.
 describe(philipom_house) :- write('In the distant you see a sad man. You and Uwe walk up to the house. The man stands outside of it [his name is philipom]'), nl.
 describe(marki_house) :- write('You see a small house, some ill looking children are laying in front of it. Then a skinny man comes out. [his name is Marki] '), nl.
-describe(village_district_end) :- write(''), nl.
+describe(village_district_end) :- write('The path narrows and the last of the huts give way to thick jungle once more.'), nl.
 describe(antoninon_house) :- write('You see a big house with lots of tools and weapons in front of it, in the door frame an intimidating man. [his name is Antoninon]'), nl.
 describe(markis_field) :- write('You see a small uneven field, carrot and potato tops spoke out of the dirt and wheat plants swaying gently in the breeze.'), nl.
 describe(tidal_strait) :- write('A long wooden bridge stretches between the two islands, beneath it the dark ocean.'), nl.
@@ -539,7 +539,7 @@ notice_objects_at(village) :-
 notice_objects_at(village_district) :- 
         write('You notice some huts on the left and right of you.'), nl.
 notice_objects_at(village_district_end) :- 
-        write(''), nl.
+        write('You go on a path trough the last huts, but you can''t go further...'), nl.
 notice_objects_at(philipom_house) :- 
     write('Philipom stands silently outside his hut, his eyes heavy with worry. Beside him, a cracked water jug rests on the ground, and the scent of bitter herbs floats in the air.'), nl.
 notice_objects_at(marki_house) :- 
