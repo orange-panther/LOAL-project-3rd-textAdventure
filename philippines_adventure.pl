@@ -253,7 +253,10 @@ talk(Villager) :-
     ; 
         true
     ),
-    write('hallo'), /*TODO: text for the beef with the other village*/
+    write('Rajah: Ferdinand, you are back and you have gained my trust. Now i need to tell you something...
+                Long ago, me and Lapu Lapu were allies, but then he turned against us. For years he has been threatening us that he will destroy the fields or houses.
+                Now I have decided, it''s enoug. In a short time there will be war...
+                Ferdinand, I need to ask you if you fight on our side? [yes.] [go.]'),
     assert(path(village, e, tidal_strait)), /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
     !.
 
@@ -513,7 +516,7 @@ describe(marki_house) :- write('You see a small house, some ill looking children
 describe(village_district_end) :- write(''), nl.
 describe(antoninon_house) :- write('You see a big house with lots of tools and weapons in front of it, in the door frame an intimidating man. [his name is Antoninon]'), nl.
 describe(markis_field) :- write('You see a small uneven field, carrot and potato tops spoke out of the dirt and wheat plants swaying gently in the breeze.'), nl.
-describe(tidal_strait) :- write('Are you sure you want to enter and continue the story?'), nl.
+describe(tidal_strait) :- write('A long wooden bridge stretches between the two islands, beneath it the dark ocean.'), nl.
 
 /* rules for des:cribing which objects are around player */
 
@@ -545,9 +548,13 @@ notice_objects_at(village_district_end) :-
     write('No one is here. The last huts fade into the jungle, and only the rustle of leaves and distant birds break the stillness. Some faint footprints lead into the trees.'), nl.
 notice_objects_at(antoninon_house) :- 
     write('Antoninon stands in the doorway, arms crossed, watching you with a stern gaze. Around him lie sharpened tools, stacked wooden crates, and a heavy chest sealed with iron.'), nl.
-notice_objects_at(markis_field) :- write('field'), nl.
-notice_objects_at(rajah_hut) :- write('rajah hut'), nl.
-notice_objects_at(tidal_strait) :- write(''), nl.
+notice_objects_at(markis_field) :- 
+    write('You see rows of carrots, potatoes and wheat growing in the soil. A simple wooden fence marks the edge of the field.'), nl.
+notice_objects_at(rajah_hut) :- 
+    write('The Rajah\'s hut stands taller than the others, decorated with bright cloth and carved wood. Two guards watch silently near the entrance.'), nl.
+notice_objects_at(tidal_strait) :- 
+    write('Below the bridge, the tidal strait shimmers with moving water. Fish dart through the current, and you can hear the steady rhythm of waves against stone.'), nl.
+
 
 /* rules for describing the death of the player */
 
@@ -574,12 +581,11 @@ halt.
 /* TODO: insert ending */
 
 die :- i_am_at(tidal_strait),
-        write('I drew my blade.
-We charged.
-Their spears flew faster than I could raise my arm. One struck my leg. I stumbled in the surf. Another hit my side. The water turned red.
-I looked up—Lapu-Lapu’s men closed in.
-The last thing I saw was the rising sun.
-And then... nothing. '), nl, nl,
+        write('You drew your blade.
+        Their spears fly faster than you can raise your arm. One struck your leg. You stumble in the surf. Another hit your side. The water is turning red.
+        You look up Lapu-Lapu’s men close in.
+        The last thing you see is the rising sun.
+        And then... nothing. '), nl, nl,
 halt.
 
 /* rules for the win of the player */
