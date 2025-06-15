@@ -211,7 +211,7 @@ talk(Villager) :-
 talk(Villager) :-
     villager(Villager),
     i_am_at(marki_house),
-    holding(food),
+    holding(grain),
     accepted(marki_task),
     write('Is this food for us?... [yes. | go(_).]'), nl,
     !.
@@ -412,6 +412,20 @@ yes :-
         accepted(marki_task),
         assert(holding(hoe)),
         write('You are now holding a hoe.'), nl,
+        !.
+
+yes :-
+        i_am_at(marki_house),
+        accepted(marki_task),
+        holding(grain),
+        retract(holding(grain)),
+        ( accepted(marki_task) ->
+                retract(accepted(marki_task)),
+                assert(completed(marki_task)),
+                write('Task completed: marki_task'), nl
+        ; 
+                true
+        ),
         !.
 
 /* rules to plow the field */
