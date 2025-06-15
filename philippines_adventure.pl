@@ -24,6 +24,7 @@ instructions :-
         write('open_object(Drawer).    -- to open a drawer or cupboard.'), nl,
         write('close_object(Drawer).   -- to close a drawer or cupboard; IMPORTANT: please remember to always close a drawer, or you will not be able to open it again.'), nl,
         write('recipes.                -- to show all recipes you are able to craft.'), nl,
+        write('talk(Villager).         -- to talk to someone.'),nl,
         write('craft(Object).          -- to craft an object that you looked up in the recipe book; you have to hold the needed items.'), nl,
         write('instructions.           -- to see this message again.'), nl,
         write('sail_away.              -- to end the game and leave the island.'), nl.
@@ -31,8 +32,10 @@ instructions :-
 /* start */
 start :- 
         retractall(i_am_at(_)),
-        assert(i_am_at(boat_deck)),
+        assert(i_am_at(village)),
         retractall(holding(_)),
+        assert(holding(grain)),
+        assert(holding(hoe)),
         retractall(accepted(_)),
         introduction, 
         instructions,
@@ -151,6 +154,9 @@ path(philipom_house, e, village_district).
 path(village_district, e, marki_house).
 path(marki_house, w, village_district).
 
+path(marki_house, e, markis_field).
+path(markis_field, w, marki_house).
+
 path(village_district, n, village_district_end).
 path(village_district_end, s, village_district).
 
@@ -192,19 +198,12 @@ talk(Villager) :-
     write('Have you got my axe yet? ... Please hurry'), nl,
     !.
 
-talk(Villager) :-
-    villager(Villager),
-    i_am_at(marki_house),
-    write("marki: Hello stranger, I am Marki. "),
-    write("I need your help, my family is starving ... We have a field but no hoe. I need to save my wife and kids :("), nl,
-    write("Would you help him? [yes.]"),
-    !.
 
 talk(Villager) :-
     villager(Villager),
     i_am_at(marki_house),
     accepted(marki_task),
-    \+holding(hoe),
+    \+holding(grain),
     write('Have you got the food yet? ... Please hurry'), nl,
     !.
 
@@ -214,6 +213,14 @@ talk(Villager) :-
     holding(grain),
     accepted(marki_task),
     write('Is this food for us?... [yes. | go(_).]'), nl,
+    !.
+
+    talk(Villager) :-
+    villager(Villager),
+    i_am_at(marki_house),
+    write("marki: Hello stranger, I am Marki. "),
+    write("I need your help, my family is starving ... We have a field but no hoe. I need to save my wife and kids :("), nl,
+    write("Would you help him? [yes.]"),
     !.
 
 talk(Villager) :-
@@ -383,17 +390,21 @@ yes :- i_am_at(river),
 no :- i_am_at(rajah_hut),
         die.
 
-yes :- i_am_at(philipom_house),
-        write('What? ... You want to help me? Thank you traveler.'), nl,
-        \+accepted(philipom_task),
-        assert(accepted(philipom_task)),
+yes :-
+        i_am_at(marki_house),
+        accepted(marki_task),
+        holding(grain),
+        retract(holding(grain)),
+        ( accepted(marki_task) ->
+                retract(accepted(marki_task)),
+                assert(completed(marki_task)), 
+                write('Task completed: marki_task'), nl
+        ; 
+                true
+        ),
         !.
-yes :- i_am_at(marki_house),
-        write('You are gonna help me?.. You are saving us, thank you'), nl,
-        \+accepted(marki_task),
-        assert(accepted(marki_task)),
-        !.
-yes :- 
+
+        yes :- 
         i_am_at(philipom_house),
         accepted(philipom_task),
         holding(axe),
@@ -407,6 +418,18 @@ yes :-
         ),
         !.
 
+yes :- i_am_at(philipom_house),
+        write('What? ... You want to help me? Thank you traveler.'), nl,
+        \+accepted(philipom_task),
+        assert(accepted(philipom_task)),
+        !.
+yes :- i_am_at(marki_house),
+        write('You are gonna help me?.. You are saving us, thank you'), nl,
+        \+accepted(marki_task),
+        assert(accepted(marki_task)),
+        !.
+
+
 yes :- 
         i_am_at(antoninon_house),
         accepted(marki_task),
@@ -414,26 +437,14 @@ yes :-
         write('You are now holding a hoe.'), nl,
         !.
 
-yes :-
-        i_am_at(marki_house),
-        accepted(marki_task),
-        holding(grain),
-        retract(holding(grain)),
-        ( accepted(marki_task) ->
-                retract(accepted(marki_task)),
-                assert(completed(marki_task)),
-                write('Task completed: marki_task'), nl
-        ; 
-                true
-        ),
-        !.
+
 
 /* rules to plow the field */
 plow :-
         i_am_at(markis_field),
         holding(hoe),
         assert(holding(grain)),
-        write('You plow the field. After you are finished you pick up the grain'),
+        write('You plow the field. After you are finished you pick up the grain'), nl,
         list_inventory.
 
 /* These rules describe the various rooms. */
