@@ -157,6 +157,9 @@ path(village_district_end, s, village_district).
 path(village_district_end, e, antoninon_house).
 path(antoninon_house, w, village_district_end).
 
+path(village_district_end, w, llorena).
+path(llorena, e, village_district_end).
+
 /* These facts tell you if villagers exist and where they are located*/
 villager(philipom).
 villager(marki).
@@ -170,6 +173,7 @@ villager_located(philipom, philipom_house).
 villager_located(marki, marki_house).
 villager_located(antoninon, antoninon_house).
 villager_located(rajah, rajah_hut).
+villager_located(llorena, llorena_house)
 
 /* These facts tell you how to talk to someone*/
 talk(Villager) :-
@@ -178,7 +182,7 @@ talk(Villager) :-
     i_am_at(philipom_house),
     holding(axe),
     accepted(philipom_task),
-    write('Philipom looks at your hand. philipom: Is this axe for me? [yes. | go(_).]'), nl,
+    write('Philipom looks at your hand. philipom: Is this axe for me? [yes. | e.]'), nl,
     !.
     
 
@@ -198,7 +202,7 @@ talk(Villager) :-
     i_am_at(philipom_house),
     accepted(philipom_task),
     \+holding(axe),
-    write('Have you got my axe yet? ... Please hurry'), nl,
+    write('philipom: Have you got my axe yet? ... Please hurry'), nl,
     !.
 
 
@@ -208,7 +212,7 @@ talk(Villager) :-
     i_am_at(marki_house),
     accepted(marki_task),
     \+holding(grain),
-    write('Have you got the food yet? ... Please hurry'), nl,
+    write('marki: Have you got the food yet? ... Please hurry'), nl,
     !.
 
 talk(Villager) :-
@@ -217,7 +221,7 @@ talk(Villager) :-
     i_am_at(marki_house),
     holding(grain),
     accepted(marki_task),
-    write('Is this food for us?... [yes. | go(_).]'), nl,
+    write('marki: Is this food for us?... [yes. | go(_).]'), nl,
     !.
 
     talk(Villager) :-
@@ -265,14 +269,28 @@ talk(Villager) :-
     villager_located(Villager, rajah_hut),
     i_am_at(rajah_hut),
     accepted(rajah_main_task),
-    write('You haven\'t gained enough status yet.'), nl,
+    write('Rajah: You haven\'t gained enough status yet.'), nl,
     !.
 
 talk(Villager) :-
     villager(Villager),
     villager_located(Villager, rajah_hut),
     i_am_at(rajah_hut),
-    write(' “I am Ferdinand Magellan,” you say, your voice steady. “I come not to conquer, but to befriend the distant lands of this world.” A long silence. Then, his answer—measured, sharp: “If you truly seek friendship,” he says, “you must first prove your loyalty." [yes.] [no.]'), nl,
+    write('You: I am Ferdinand Magellan, I come not to conquer, but to befriend the distant lands of this world. 
+    A long silence. Then, his answer—measured, sharp:
+    Rajah: If you truly seek friendship, you must first prove your loyalty. [yes.]|[no.]'), nl,
+    !.
+
+talk(Villager) :-
+    villager(Villager),
+    villager_located(Villager, llorena_house),
+    i_am_at(llorena_house),
+    write('You approach the women. The moment she hears your footsteps she looks up at you holding her watering can in front of her as if she wants to protect herself with it.'), nl,
+    write('You: I come in peace'), nl,
+    write('You put up your hands in a sign of surrender'), nl,
+    write('Llorena: I shouldn\'t talk to strangers. Especially not god denying ones'), nl,
+    write('She looks at the cross necklace around your neck'), nl,
+    write('Should you try and convince her of your religion? [yes.]|[e.]'), nl,
     !.
 
 /* These facts tell what you can craft out of objects */
@@ -440,9 +458,16 @@ no :- i_am_at(rajah_hut),
 
 
 yes :- i_am_at(rajah_hut),
+        write('You have to help some villagers in order to continue the story'), nl,
         assert(accepted(rajah_main_task)),
         list_tasks,
         !.
+
+yes :- i_am_at(llorena_house),
+        write('You begin to talk about your religion: your god, the benefits and the rules for what seems to be hours.
+                After you finished your lecture Llorena looks at you and gives you an akward smile before she runs back inside her house.'), nl,
+        !.
+        
 
 yes :-
         i_am_at(marki_house),
@@ -458,7 +483,7 @@ yes :-
         ),
         !.
 
-        yes :- 
+yes :- 
         i_am_at(philipom_house),
         accepted(philipom_task),
         holding(axe),
@@ -517,6 +542,7 @@ describe(village_district_end) :- write('The path narrows and the last of the hu
 describe(antoninon_house) :- write('You see a big house with lots of tools and weapons in front of it, in the door frame an intimidating man. [his name is Antoninon]'), nl.
 describe(markis_field) :- write('You see a small uneven field, carrot and potato tops spoke out of the dirt and wheat plants swaying gently in the breeze.'), nl.
 describe(tidal_strait) :- write('A long wooden bridge stretches between the two islands, beneath it the dark ocean.'), nl.
+describe(llorena_house) :- write('You walk up to another house. Seemingly smaller than the other ones.'), nl.
 
 /* rules for des:cribing which objects are around player */
 
@@ -539,7 +565,8 @@ notice_objects_at(village) :-
 notice_objects_at(village_district) :- 
         write('You notice some huts on the left and right of you.'), nl.
 notice_objects_at(village_district_end) :- 
-        write('You go on a path trough the last huts, but you can''t go further...'), nl.
+        write('You go on a path trough the last huts, but you can''t go further...
+                You need to go back [s|w|e]'), nl.
 notice_objects_at(philipom_house) :- 
     write('Philipom stands silently outside his hut, his eyes heavy with worry. Beside him, a cracked water jug rests on the ground, and the scent of bitter herbs floats in the air.'), nl.
 notice_objects_at(marki_house) :- 
@@ -554,7 +581,8 @@ notice_objects_at(rajah_hut) :-
     write('The Rajah\'s hut stands taller than the others, decorated with bright cloth and carved wood. Two guards watch silently near the entrance.'), nl.
 notice_objects_at(tidal_strait) :- 
     write('Below the bridge, the tidal strait shimmers with moving water. Fish dart through the current, and you can hear the steady rhythm of waves against stone.'), nl.
-
+notice_objects_at(llorena_house) :- 
+    write('In the garden you notice a woman watering the flowers. [Her name is Llorena]')
 
 /* rules for describing the death of the player */
 
