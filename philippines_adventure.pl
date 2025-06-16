@@ -256,7 +256,7 @@ talk(Villager) :-
     write('Rajah: Ferdinand, you are back and you have gained my trust. Now i need to tell you something...
                 Long ago, me and Lapu Lapu were allies, but then he turned against us. For years he has been threatening us that he will destroy the fields or houses.
                 Now I have decided, it''s enough. In a short time there will be war...
-                Ferdinand, I need to ask you if you fight on our side? [yes.] [go.]'),
+                Ferdinand, I need to ask you if you fight on our side? [yes.] [n.]'),
     assert(path(village, e, tidal_strait)), /* tidal strait ist die Landbrücke zwischen den 2 Inseln */
     !.
 
